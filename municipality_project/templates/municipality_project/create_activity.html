@@ -1,0 +1,18 @@
+{% extends "municipality_project/base.html" %}
+
+{% block title %}	  <title>Δημιουργία Δραστηριότητας</title> {% endblock %}
+
+{% block content %}
+<body>
+<div class="grid-container">
+  {% include "municipality_project/menu.html" %}
+  <div class="item3" style="min-height: 471px;">
+			<div class="container" style="margin-top: 50px; position:center; height:100%;">
+				<a href="{% url 'municipality_project:create_task' %}" class="btn btn-primary btn-lg btn-block" role="button" aria-pressed="true">Δημιουργία Αρμοδιότητας</a>
+				<a href="{% url 'municipality_project:create_project' %}" class="btn btn-secondary btn-lg btn-block" role="button" aria-pressed="true">Δημιουργία Έργου</a>
+			</div>
+		</div>
+  {% include "municipality_project/footer.html" %}
+</div>
+</body>
+{% endblock %}

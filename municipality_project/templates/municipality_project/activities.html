@@ -1,0 +1,124 @@
+{% extends "municipality_project/base.html" %}
+
+{% block style %}
+<style>
+	.btn {
+		margin-top: 10px;
+		margin-left: 40%;
+	}
+	</style>
+
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function(){
+$("#myInput").on("keyup", function() {
+var value = $(this).val().toLowerCase();
+$("#searchTable tr").filter(function() {
+  $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+  });
+});
+});
+</script>
+{% endblock %}
+
+
+{% block content %}
+<body onload="load()">
+<div class="grid-container">
+  {% include "municipality_project/menu.html" %}
+		<div class="item3" style="min-height: 471px;">
+			<div class="main">
+				<div class="topnav">
+					<div class="search-container">
+						<input type="text" id = "myInput" onkeyup="search()" placeholder="Αναζήτηση" name="search">
+							<button type="submit"><i class="fa fa-search"></i></button>
+					</div>
+				</div>
+				<div class="container">
+          {% if activities %}
+					<table id = "tableId" align="center">
+						<thead>
+							<tr class= "head">
+								<th style="width:5%"> </th>
+								<th>Τίτλος</th>
+								<th>Ημερομηνία ανάθεσης</th>
+								<th>Προθεσμία</th>
+								<th style="width:10%"> </th>
+								<th style="width:10%"> </th>
+							</tr>
+						</thead>
+
+						<tbody id="searchTable">
+              {%  for activity in activities %}
+                {% load municipality_project_filters %}
+                {% if activity|isTask %}
+								    <tr class="body" style= "cursor: pointer;">
+									    <td align = "center" class="vcenter"><img src="https://img.icons8.com/dotty/80/000000/task-planning.png" width="30" height="30" title="αρμοδιότητα"></td>
+									    <td><a href = "{% url 'municipality_project:activityRow' activity_id=activity.pk %}">{{activity.title}}</a></td>
+									    <td>{{activity.release_date|formatDate}}</td>
+									    <td>{{activity.deadline|formatDate }}</td>
+                      {% if activity.complete %}
+                        {% if activity|isApproved %}
+											    <td> </td>
+											    <td> </td>
+									      {% else %}
+											    <td><i>Αναμένεται</i></td>
+											    <td><i>έγκριση</i></td>
+                        {% endif %}
+									    {% else %}
+										    <td class="text-center">
+											    <div>
+												    <a data-toggle="modal" data-target="#myModal"><span class="fa fa-comments-o" style="font-size:22px; align:center;" alt="Προσθήκη Σχολίου" width="150" height="150"></span></a>
+											    </div>
+										    </td>
+										    <td class="text-center">
+											    <a href="#">
+												    <span class="fa fa-edit" title="Τροποποίηση" style="font-size:22px; align:center;" width="150" height="150"></span>
+											    </a>
+										    </td>
+									    {% endif %}
+								    </tr>
+								{% else %}
+									<tr class="body" style= "cursor: pointer;">
+										<td align = "center" class="vcenter"><img src="https://img.icons8.com/dotty/50/000000/project-setup.png" width="30" height="30" title="έργο"></td>
+										<td>
+											<a href= "{% url 'municipality_project:activityRow' activity_id=activity.pk %}">{{ activity.title }}</a>
+										</td>
+										<td>{{ activity.release_date|formatDate }}</td>
+										<td>{{ activity.deadline|formatDate }}</td>
+
+											{% if activity.complete %}
+												<td> </td>
+												<td> </td>
+											{% else %}
+											  <td align= "center"></td>
+											  <td class="text-center">
+												  <a href="#">
+												    <span class="fa fa-edit" title="Τροποποίηση" style="font-size:22px; align:center;" width="150" height="150"></span>
+												  </a>
+											  </td>
+											{% endif %}
+									  </tr>
+								{% endif %}
+              {% endfor %}
+            </tbody>
+					</table>
+
+					{% else %}
+						<div class="alert alert-info center-block" style="width: 100%;" role="alert">
+							<p class="text-center">
+							<br>
+							<strong>Δεν έχετε αναθέσει καμία αρμοδιότητα.</strong>
+							</p>
+						</div>
+					{% endif %}
+
+				</div>
+			</div>
+		</div>
+  {% include "municipality_project/footer.html" %}
+</div>
+</body>
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends "municipality_project/base.html" %}
+
+{% block title %}	  <title>Οι δραστηριότητές μου</title> {% endblock %}
+
+{% block style %}
+<style>
+a.iconReference { text-decoration: none; }
+
+.button-content {
+  text-align: center;
+}
+
+#btn-load-more {
+  position: center;
+
+}
+</style>
+{% endblock %}
+
+{% block script %}
+  <script>
+  $(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+  var value = $(this).val().toLowerCase();
+  $("#searchTable tr").filter(function() {
+    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+  });
+  </script>
+{% endblock %}
+
+
+{% block content %}
+<body onload="load()">
+<div class="grid-container">
+  {% include "municipality_project/menu.html" %}
+  {% load municipality_project_filters %}
+  {% load static %}
+
+  <div class="item3" style="min-height: 471px;">
+    <div class="main">
+      <div class="topnav">
+        <div class="search-container">
+          <input type="text" id = "myInput" onkeyup="search()" placeholder="Αναζήτηση" name="search">
+            <button type="submit"><i class="fa fa-search"></i></button>
+        </div>
+      </div>
+
+      <div class="container">
+        {% if tasks %}
+        <table id = "tableId" align="center">
+            <thead>
+              <tr class= "head">
+                <th style="width:5%">Ολοκληρώθηκε</th>
+                <th style="text-align: center;">Τίτλος</th>
+                <th>Προθεσμία</th>
+                <th>Αποστολέας</th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="searchTable">
+            {% for task in tasks %}
+
+            {% if task.activity_id.complete %}
+            <tr class = "body pending" bgcolor="#F8F8F8">
+              <td align = "center"><img title="Αναμένεται Έγκριση" style = "font-size: 20px" width= "22" height ="22" src="{% static 'municipality_project/images/pending_approval.png' %}" alt="Αναμένεται Έγκριση"></td>
+              <td align="center">
+                <a href="{% url 'municipality_project:activityRow' activity_id=task.activity_id.pk %}">{{task.activity_id.title}}</a>
+              </td>
+              <td>{{task.activity_id.deadline|formatDate}}</td>
+              <td>{{task.activity_id.sender.name}} {{task.activity_id.sender.surname}}</td>
+              <td></td>
+              <td></td>
+            </tr>
+            {% else %}
+
+                <tr class="body">
+                  <form method ="POST" action="{% url 'municipality_project:completeTask' %}">{% csrf_token %}
+                    <td align = "center" class="vcenter">
+                      <input type="hidden" name="selectedTasks" value="{{task.activity_id.pk}}"/>
+                      <input type="submit" value="Υποβολή"/>
+                    </td>
+                  </form>
+                  <td align="center"><a href="{% url 'municipality_project:activityRow' activity_id=task.activity_id.pk %}">{{task.activity_id.title}}</a>
+                  <p style="color: #B6BCB4; font-size:30;" id="comment"></p></td>
+                  <td>{{task.activity_id.deadline|formatDate}}</td>
+                  <td>{{task.activity_id.sender.name}} {{task.activity_id.sender.surname}}</td>
+                  <td>
+                    {% if deptDirector %}
+                      <span style="font-size:30px" alt="Κατάτμηση Αρμοδιότητας" title="Κατάτμηση Αρμοδιότητας" width="224" height="224"><a class = "iconReference" href ="create_project"> &#247;</a></span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <div>
+                      <a data-toggle="modal" data-target="#myModal<%=count%>"><span class="fa fa-comments-o" style="font-size:22px; align:center;" alt="Προσθήκη Σχολίου" width="150" height="150"></span></a>
+                    </div>
+                  </td>
+
+                </tr>
+              {% endif %}
+            {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <div class="alert alert-info center-block" style="width: 100%;" role="alert">
+              <p class="text-center"><br><strong>Δεν εκκρεμεί κάποια αρμοδιότητα προς ολοκλήρωση</strong></p>
+          </div>
+          {% endif %}
+
+          <br style = "line-height:2;">
+          <!--<a class="submit" style="float: right" data-target="#submitModal" data-toggle="modal" style ="cursor:pointer;">Υποβολή</a> -->
+        </div>
+    </div>
+  </div>
+  {% include "municipality_project/footer.html" %}
+</div>
+</body>
+{% endblock %}

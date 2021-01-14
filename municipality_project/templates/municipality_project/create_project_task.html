@@ -1,0 +1,138 @@
+{% extends "municipality_project/base.html" %}
+
+{% block title %}	  <title>Δημιουργία Δραστηριότητας Έργου</title> {% endblock %}
+
+{% block style %}
+<style>
+  .slidecontainer {
+    width: 100%;
+  }
+
+  .slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 25px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+  }
+
+  .slider:hover {
+    opacity: 1;
+  }
+
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: #4CAF50;
+    cursor: pointer;
+  }
+
+  .slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #4CAF50;
+    cursor: pointer;
+  }
+</style>
+{% endblock %}
+
+{% block script %}
+		<script>
+			function dateFunction() {
+				var today = new Date();
+				var dd = today.getDate();
+				var mm = today.getMonth() + 1; //January is 0!
+				var yyyy = today.getFullYear();
+
+				if (dd < 10) {
+					dd = '0' + dd
+				}
+
+				if (mm < 10) {
+					mm = '0' + mm
+				}
+
+				today = yyyy + '-' + mm + '-' + dd;
+				document.getElementById('deadline').setAttribute("min", today);
+			}
+		</script>
+{% endblock %}
+
+
+{% block content %}
+<body>
+<div class="grid-container">
+  {% include "municipality_project/menu.html" %}
+  <div class="item3">
+    <div class="main">
+      <div class="container">
+        <h2 style="text-align:center">Δημιουργία Αρμοδιότητας Έργου</h2>
+        <form method ="POST" action="{% url 'municipality_project:save_project' %}">{% csrf_token %}
+              <div class="form-group">
+                <div class="form-group col-md-12">
+                  <label for="title">Τίτλος:</label>
+                  <br>
+                  <input type="text" class="form-control" id="title" placeholder="Τίτλος" name="title" required>
+                </div>
+                <div class="form-group col-md-12">
+                  <label for="deadline">Προθεσμία:</label>
+                  <input type="date"  max = "{{project_deadline}}" onclick="dateFunction()" class="form-control" id="deadline" name="date" required>
+                </div>
+                <div class="form-group col-md-12">
+                  <label for="description">Περιγραφή:</label>
+                  <textarea class="form-control" id="description" placeholder="Περιγραφή" rows="3"></textarea>
+                </div>
+                {% load municipality_project_filters %}
+                <div class="form-group col-md-12">
+                  <label for='receiver'>Αναθέτω την αρμοδιότητα στον υπάλληλο:</label>
+                  <select id='receiver' name='receiver' class='form-control' required>
+                    <!--When the database will be connected, the options will be names-->
+                    <option value=''>--- Επιλέξτε έναν υπάληλο ---</option>
+                    {% for sub in subs %}
+                    {% if deptDirector %}
+                    <option value="{{sub.employee_id}}"><p> {{sub.employee.name}} {{sub.employee.surname}}</p></option>
+                    {% endif %}
+                    {% if dirDirector and sub|isNotDirectionDirector %}
+                    <option value="{{sub.employee_id}}"><p> {{sub.name}} {{sub.surname}}</p></option>
+                    {% endif %}
+                  {% endfor %}
+                  </select>
+                  <input type="hidden" id="project_title" name="project_title" value="{{project_title}}">
+                  <input type="hidden" id="project_description" name="project_description" value="{{project_description}}">
+                  <input type="hidden" id="project_deadline" name="project_deadline" value="{{project_deadline}}">
+
+                </div>
+                <script>
+                var slider = document.getElementById("range");
+                var output = document.getElementById("percentage");
+                output.innerHTML = slider.value;
+
+                slider.oninput = function() {
+                  output.innerHTML = this.value;
+                }
+                </script>
+                <div class="form-group col-md-12">
+                  <!--Η ανάθεση έργου πρέπει να γίνεται εφικτή στη 2η αρμοδιότητα-->
+                  {% if request.session.activities|length > 0 %}
+                  <button type ="submit" class="submit" id="done"  name="done" value="Done Button" style="float: right">Ανάθεση Έργου</button>
+                  {% endif %}
+                  <button type ="submit" class="submit"  name="next" value="Next Button" style="float: right">Επόμενη Αρμοδιότητα</button>
+                </div>
+              </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+  {% include "municipality_project/footer.html" %}
+</div>
+</body>
+{% endblock %}
+
+{% block endscript%}
+{% endblock %}

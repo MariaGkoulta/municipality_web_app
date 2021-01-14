@@ -1,0 +1,51 @@
+{% extends "municipality_project/base.html" %}
+
+{% block title %}		<title>Τα στοιχεία μου</title> {% endblock %}
+
+
+{% block content %}
+<body>
+<div class="grid-container">
+  {% include "municipality_project/menu.html" %}
+  {% load municipality_project_filters %}
+  {% load static %}
+  <div class="item3">
+    <div class="container">
+      <div class="card">
+      {% if employee %}
+        <div class="card-header" style= "text-align:center;">
+          <img src="{% static 'municipality_project/images/logo-dafni.png' %}" alt="logo" style= "width:80px;">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <strong>Τα στοιχεία μου</strong>
+          </div>
+
+          <p class="card-text">
+            <ul class="list-unstyled">
+              <li><b>Ονοματεπώνυμο: </b> {{ employee.name }} <br></li>
+              <li><b>Όνομα χρήστη: </b> {{ employee.surname}} <br></li>
+              <li><b>Ηλεκτρονική Διεύθυνση: </b> {{ employee.email }}<br></li>
+
+              <li><b>Διεύθυνση: </b> {{ employee|getDirection }} <br></li>
+              {% if officeClerk %}
+                <li><b>Τμήμα: </b> {{ officeClerk|getDepartment }}<br></li>
+                <li><b>Γραφείο: </b> {{  officeClerk|getOffice }}<br></li>
+              {% endif %}
+              {% if deptDirector %}
+                <li><b>Τμήμα: </b> {{ deptDirector|getDepartment }}<br></li>
+              {% endif %}
+            </ul>
+          </p>
+        </div>
+        {% endif %}
+      </div>
+      </div>
+    </div>
+  </div>
+  {% include "municipality_project/footer.html" %}
+</body>
+{% endblock %}
+
+{% block endscript%}
+{% endblock %}

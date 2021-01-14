@@ -1,0 +1,133 @@
+{% extends "municipality_project/base.html" %}
+
+{% block title %}	  <title>Λεπτομέρειες Δραστηριότητας</title> {% endblock %}
+
+
+{% block content %}
+<body>
+<div class="grid-container">
+  {% include "municipality_project/menu.html" %}
+  		<div class="item3">
+
+        <div class="main">
+  				<div class="topnav">
+  					<div class="search-container">
+  						<input type="text" id = "myInput" onkeyup="search()" placeholder="Αναζήτηση" name="search">
+  							<button type="submit"><i class="fa fa-search"></i></button>
+  					</div>
+  				</div>
+
+  			<div class="container">
+
+  				<div id="acceptModal" class="modal fade acceptModal">
+  					<div class="modal-dialog modal-confirm" >
+  						<form method ="POST" action="approveTask_controller.jsp">
+  							<div class="modal-content">
+  								<div class="modal-header">
+  									<div class="icon-box">
+  										<i class="material-icons">&#xE876;</i>
+  									</div>
+
+  									<h4 class="modal-title" style="font-size:20px;"><strong>Εγκρίθηκε επιτυχώς!</strong></h4>
+  								</div>
+
+  								<div class="modal-footer">
+  									<button type="submit" class="btn btn-success btn-block">OK</button>
+  								</div>
+  							</div>
+  						</form>
+  					</div>
+  				</div>
+
+  				<div class="modal fade" id="declineModal" role="dialog">
+  					<div class="modal-dialog modal-sm">
+  						<!-- Modal content-->
+  						<form method ="POST" action="RejectTask_commentController.jsp">
+  						<div class="modal-content">
+  							<div class="modal-header" style="background-color:#ffe6e6;">
+
+  								<button type="button" class="close" data-dismiss="modal">&times;</button>
+  								<h4 class="modal-title">Αιτιολογήστε την μη έγκριση σας:</h4>
+  							</div>
+
+  							<div class="modal-body">
+  								<textarea name="commentArea" id="commentArea" style="min-width: 100%" placeholder="Πληκτρολογήστε εδώ" required></textarea>
+  							</div>
+
+  							<div class="form-group">
+  								<input type="hidden" id="activityId" name="activityId" value="<%= id%>">
+  							</div>
+
+
+  							<div class="form-group">
+  								<input type="hidden" id="sentBySender" name="sentBySender" value="true">
+  							</div>
+
+  							<div class="form-group col-md-12">
+  								<label for="deadline">Παράταση προθεσμίας αρμοδιότητας: </label>
+  									<input type="date" onclick="dateFunction()" class="form-control" id="deadline" name="date" required>
+  							</div>
+
+  							<div class="modal-footer-decline">
+  								<button type="submit" onclick= "rejectTask()" class="justificationComment">Υποβολή αιτιολόγησης</button>
+  							</div>
+  						</div>
+  						</form>
+  					</div>
+  				</div>
+
+          {% if activity %}
+  				<div id="main" class="col-sm-0 text-left">
+  					<div class="container">
+  						<div class="card">
+  							<div class="card-header" style= "text-align:center;">
+  								<strong>Αναλυτική Περιγραφή</strong>
+  							</div>
+
+  							<div class="card-body">
+  								<div class="card-title">
+  									{{activity.title}}
+  								</div>
+
+  								<p class="card-text">
+  									<ul class="list-unstyled">
+  									  <li><b>Αποστολέας: </b> {{activity.sender.name }} {{ activity.sender.surname }} <br></li>
+
+  										<li><b>Ημερομηνία ανάθεσης: </b> {{ activity.release_date }} <br></li>
+
+  										<li><b>Παραλήπτης: </b> {{ task.receiver_id.name }} {{ task.receiver_id.surname }} <br></li>
+
+  										<li><b>Προθεσμία ολοκλήρωσης: </b> {{ activity.deadline }} <br></li>
+
+                      {% load municipality_project_filters %}
+  										<li><b>Ολοκληρώθηκε: </b> {{task|isComplete}} <br></li>
+
+  										{% if activity.description %}
+  											<li><b>Λεπτομερής περιγραφή: </b>
+  												<div class = "border">
+  												{{ activity.description }}</div><br></li>
+  										{% endif %}
+  										<br>
+  									</ul>
+  								</p>
+  							</div>
+  						</div>
+  					</div>
+  				</div>
+          {% else %}
+          <div class="alert alert-info center-block" style="width: 100%;" role="alert">
+            <p class="text-center">
+            <strong>{{errors}}</strong>
+            </p>
+          </div>
+          {% endif %}
+  			</div>
+  		</div>
+  	</div>
+  {% include "municipality_project/footer.html" %}
+</div>
+</body>
+{% endblock %}
+
+{% block endscript%}
+{% endblock %}

@@ -1,0 +1,116 @@
+{% load municipality_project_filters %}
+{% if employee %}
+<div class ="item1">
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#" style="font-size: 15px;"><span>Δήμος Δάφνης-Υμηττού</span></a>
+      </div>
+      <ul class="nav navbar-nav" id="navbar">
+        {% if deptDirector or officeClerk %}
+        <li class="{% if request.resolver_match.url_name == "mytasks" or request.resolver_match.url_name == "authenticate" %}active{% endif %}">
+          <a href="{% url 'municipality_project:mytasks' %}" class="notification" >
+          <span class="active">ΑΡΜΟΔΙΟΤΗΤΕΣ</span>
+          {% if employee|numberOfTasks > 0 %}
+            <span class="badge">{{ employee|numberOfTasks }}</span>
+          {%  endif %}
+          </a>
+        </li>
+        {% endif %}
+        {% if not officeClerk %}
+        <li class="{% if request.resolver_match.url_name == "create_activity" %}active{% endif %}">
+          <a href="{% url 'municipality_project:create_activity' %}" class="notification" >
+          <span class="active">ΔΗΜΙΟΥΡΓΙΑ ΔΡΑΣΤΗΡΙΟΤΗΤAΣ</span>
+          </a>
+        </li>
+        <li class="{% if request.resolver_match.url_name == "activities" or request.resolver_match.url_name == "authenticate" and not deptDirector %}active{% endif %}">
+          <a href="{% url 'municipality_project:activities' %}" class="notification" >
+            <span class="active">ΑΝΑΤΕΘΕΙΣΕΣ ΑΡΜΟΔΙΟΤΗΤΕΣ</span>
+            {% if employee|numberOfAssigned > 0 %}
+              <span class="badge">{{ employee|numberOfAssigned }}</span>
+            {%  endif %}
+          </a>
+        </li>
+        {% endif %}
+        <li class="{% if request.resolver_match.url_name == "notifications" %}active{% endif %}">
+          <a href="{% url 'municipality_project:notifications' %}" class="notification" >
+          <span>ΕΙΔΟΠΟΙΗΣΕIΣ</span>
+          {% if employee|numberOfNotifications > 0 %}
+            <span class="badge">{{ employee|numberOfNotifications }} </span>
+          {%  endif %}
+          </a>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li><a><span id="dateTime">{{ current_date }}</span></a></li>
+
+        <!-- just for media screen -->
+        <li>
+          <div class="dropdown1">
+            <a class="navbar-brand" href="#"style="font-size: 15px;"><span>Δήμος Δάφνης-Υμηττού</span></a>
+            <button class="dropbtn1">
+              <i class="fa fa-bars"></i>
+            </button>
+            <div class="dropdown1-content">
+              <ul>
+                {% if deptDirector or officeClerk %}
+                <li class="">
+                  <a href="{% url 'municipality_project:mytasks' %}" class="notification" >
+                  <span class="active">ΑΡΜΟΔΙΟΤΗΤΕΣ</span>
+                  {% if employee|numberOfTasks > 0 %}
+                    <span class="badge">{{ employee|numberOfTasks }}</span>
+                  {%  endif %}
+                  </a>
+                </li>
+                {% endif %}
+                {% if not officeClerk %}
+                <li class="">
+                  <a href="{% url 'municipality_project:create_activity' %}" class="notification" >
+                  <span class="active">ΔΗΜΙΟΥΡΓΙΑ ΔΡΑΣΤΗΡΙΟΤΗΤAΣ</span>
+                  </a>
+                </li>
+                <li class="">
+                  <a href="{% url 'municipality_project:activities' %}" class="notification" >
+                    <span class="active">ΑΝΑΤΕΘΕΙΣΕΣ ΑΡΜΟΔΙΟΤΗΤΕΣ</span>
+                    {% if employee|numberOfAssigned > 0 %}
+                      <span class="badge">{{ employee|numberOfAssigned }}</span>
+                    {%  endif %}
+                  </a>
+                </li>
+                {% endif %}
+                <li class="">
+                  <a href="{% url 'municipality_project:notifications' %}" class="notification" >
+                  <span>ΕΙΔΟΠΟΙΗΣΕΙΣ</span>
+                  {% if employee|numberOfNotifications > 0 %}
+                    <span class="badge">{{ employee|numberOfNotifications }} </span>
+                  {%  endif %}
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </li>
+        <!-- end of media screen -->
+      </ul>
+    </div>
+  </nav>
+</div>
+<!-- side menu  -->
+<div class="item2">
+  <div class ="menu">
+    <ul>
+      {% load static %}
+      <li><a href="#"><span><img src="{% static 'municipality_project/images/profile3.png' %}" alt="εικόνα προφίλ"/>{{employee.name}} {{ employee.surname }}</span></a> </li>
+      <li class="{% if request.resolver_match.url_name == "info"%}active{% endif %}"><a href = "{% url 'municipality_project:info' %}">Τα στοιχεία μου</a></li>
+      <li><a href="{% url 'municipality_project:logout' %}"><span class="glyphicon glyphicon-log-out"></span> Αποσύνδεση</a></li>
+    </ul>
+  </div>
+</div>
+<div class="item3" style="min-height: 471px;">
+</div>
+{% else %}
+<script type="text/javascript">
+    window.location.href = "{% url 'municipality_project:login' %}";
+</script>
+{% endif %}
